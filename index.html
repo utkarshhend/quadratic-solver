@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b0f1a">
+<title>Quadratic Solver</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    min-height:100vh;
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    color:#f8fafc;
+    background:
+        radial-gradient(circle at 0% 0%,#312e81 0%,transparent 34%),
+        radial-gradient(circle at 100% 100%,#164e63 0%,transparent 34%),
+        #080b14;
+    overflow-x:hidden;
+}
+
+.background{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:-1}
+.blob{
+    position:absolute;width:320px;height:320px;border-radius:50%;
+    filter:blur(100px);opacity:.25;animation:float 8s infinite ease-in-out
+}
+.blob1{background:#6366f1;top:-120px;left:-120px}
+.blob2{background:#06b6d4;right:-120px;bottom:-120px;animation-delay:-4s}
+@keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(35px,-25px)}}
+
+.container{width:min(92%,700px);margin:auto;padding:55px 0 30px}
+
+header{text-align:center;margin-bottom:28px}
+.logo{
+    width:58px;height:58px;margin:0 auto 15px;
+    display:flex;align-items:center;justify-content:center;
+    border-radius:17px;font-size:30px;font-weight:800;
+    background:linear-gradient(135deg,#6366f1,#8b5cf6);
+    box-shadow:0 10px 35px rgba(99,102,241,.35)
+}
+header h1{font-size:clamp(32px,7vw,48px);letter-spacing:-1.5px;margin-bottom:8px}
+header p{color:#94a3b8;font-size:16px}
+header strong{color:#c4b5fd}
+
+.card{
+    padding:34px;border:1px solid rgba(255,255,255,.09);
+    border-radius:24px;background:rgba(15,23,42,.76);
+    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    box-shadow:0 25px 70px rgba(0,0,0,.38)
+}
+
+.equation{text-align:center;font-size:25px;font-weight:700;color:#c4b5fd;margin-bottom:30px}
+
+.inputs{display:flex;align-items:end;justify-content:center;gap:9px}
+.input-group{flex:1;min-width:0}
+.input-group label{
+    display:block;margin-bottom:8px;color:#a5b4fc;
+    font-size:14px;font-weight:700;text-align:center
+}
+.input-group input{
+    width:100%;padding:14px 12px;border:1px solid #334155;
+    border-radius:12px;outline:none;color:#f8fafc;background:#111827;
+    font-size:16px;-webkit-appearance:none;appearance:none;
+}
+.input-group input::placeholder{color:#64748b}
+.input-group input:focus{
+    border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,.15)
+}
+.operator{color:#64748b;font-size:19px;padding-bottom:13px;white-space:nowrap}
+
+.buttons{display:flex;gap:12px;margin-top:25px}
+button{
+    border:0;border-radius:12px;cursor:pointer;font-size:15px;font-weight:700;
+    transition:transform .18s,box-shadow .18s,background .18s
+}
+button:active{transform:scale(.98)}
+.solve{
+    flex:1;padding:15px;color:#fff;
+    background:linear-gradient(135deg,#6366f1,#8b5cf6);
+    box-shadow:0 10px 25px rgba(99,102,241,.25)
+}
+.clear{padding:15px 25px;color:#cbd5e1;background:#1e293b}
+.clear:hover{background:#334155}
+
+.error{min-height:0;margin-top:14px;color:#fca5a5;text-align:center;font-size:14px}
+
+.result{
+    display:none;margin-top:24px;padding:21px;border-radius:18px;
+    background:rgba(30,41,59,.72);border:1px solid rgba(255,255,255,.06);
+    animation:up .3s ease
+}
+.result.show{display:block}
+@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.result-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px;font-size:18px;font-weight:700}
+.badge{padding:5px 10px;border-radius:20px;color:#bbf7d0;background:rgba(34,197,94,.12);font-size:12px}
+
+.discriminant{
+    display:flex;justify-content:space-between;padding:14px;
+    margin-bottom:12px;border-radius:10px;background:#111827;color:#94a3b8
+}
+.discriminant strong{color:#f8fafc}
+
+.roots{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.root{
+    padding:18px;text-align:center;border-radius:12px;
+    background:#111827;border:1px solid #263449;overflow-wrap:anywhere
+}
+.root span{display:block;margin-bottom:8px;color:#94a3b8;font-size:13px}
+.root strong{color:#a5b4fc;font-size:21px}
+
+.copy{
+    width:100%;margin-top:15px;padding:11px;
+    color:#cbd5e1;background:#1e293b
+}
+.copy:hover{background:#334155}
+
+.formula{
+    margin-top:24px;padding:24px;text-align:center;border-radius:18px;
+    background:rgba(15,23,42,.68);border:1px solid rgba(255,255,255,.06)
+}
+.formula h2{margin-bottom:18px;color:#94a3b8;font-size:15px;font-weight:500}
+.formula-equation{display:flex;align-items:center;justify-content:center;gap:8px;font-size:21px;font-weight:600}
+.fraction{display:inline-flex;flex-direction:column;text-align:center;line-height:1.4}
+.fraction span:first-child{padding:0 9px 5px;border-bottom:1px solid #94a3b8}
+.fraction span:last-child{padding-top:5px}
+
+footer{margin-top:23px;text-align:center;color:#475569;font-size:12px}
+
+@media(max-width:600px){
+    .container{width:min(92%,500px);padding:35px 0 25px}
+    header{margin-bottom:22px}
+    .card{padding:21px;border-radius:20px}
+    .equation{font-size:22px;margin-bottom:24px}
+    .inputs{display:grid;grid-template-columns:1fr;gap:13px}
+    .operator{display:none}
+    .input-group label{text-align:left;margin-bottom:6px}
+    .input-group input{padding:14px;font-size:16px}
+    .buttons{flex-direction:column;margin-top:20px}
+    .clear{width:100%}
+    .roots{grid-template-columns:1fr}
+    .formula-equation{font-size:18px}
+    .formula{padding:20px}
+}
+
+@media(prefers-reduced-motion:reduce){
+    .blob,.result{animation:none}
+}
+</style>
+</head>
+
+<body>
+<div class="background"><div class="blob blob1"></div><div class="blob blob2"></div></div>
+
+<main class="container">
+<header>
+    <div class="logo">∿</div>
+    <h1>Quadratic Solver</h1>
+    <p>Solve <strong>ax² + bx + c = 0</strong> instantly</p>
+</header>
+
+<section class="card">
+    <div class="equation">ax² + bx + c = 0</div>
+
+    <div class="inputs">
+        <div class="input-group">
+            <label for="a">a</label>
+            <input id="a" type="number" inputmode="decimal" step="any" placeholder="Enter a">
+        </div>
+        <div class="operator">x² +</div>
+
+        <div class="input-group">
+            <label for="b">b</label>
+            <input id="b" type="number" inputmode="decimal" step="any" placeholder="Enter b">
+        </div>
+        <div class="operator">x +</div>
+
+        <div class="input-group">
+            <label for="c">c</label>
+            <input id="c" type="number" inputmode="decimal" step="any" placeholder="Enter c">
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button class="solve" id="solveBtn">Calculate <span>→</span></button>
+        <button class="clear" id="clearBtn">Clear</button>
+    </div>
+
+    <div class="error" id="error"></div>
+
+    <div class="result" id="result">
+        <div class="result-head">
+            <span>Results</span>
+            <span class="badge" id="rootType"></span>
+        </div>
+
+        <div class="discriminant">
+            <span>Discriminant</span>
+            <strong id="discriminant">—</strong>
+        </div>
+
+        <div class="roots">
+            <div class="root"><span>x₁</span><strong id="root1">—</strong></div>
+            <div class="root"><span>x₂</span><strong id="root2">—</strong></div>
+        </div>
+
+        <button class="copy" id="copyBtn">📋 Copy Results</button>
+    </div>
+</section>
+
+<section class="formula">
+    <h2>Quadratic Formula</h2>
+    <div class="formula-equation">
+        x =
+        <span class="fraction">
+            <span>−b ± √(b² − 4ac)</span>
+            <span>2a</span>
+        </span>
+    </div>
+</section>
+
+<footer>Built with HTML • CSS • JavaScript</footer>
+</main>
+
+<script>
+const aInput=document.getElementById("a");
+const bInput=document.getElementById("b");
+const cInput=document.getElementById("c");
+const solveBtn=document.getElementById("solveBtn");
+const clearBtn=document.getElementById("clearBtn");
+const copyBtn=document.getElementById("copyBtn");
+const result=document.getElementById("result");
+const error=document.getElementById("error");
+const discriminant=document.getElementById("discriminant");
+const root1=document.getElementById("root1");
+const root2=document.getElementById("root2");
+const rootType=document.getElementById("rootType");
+
+function formatNumber(n){
+    if(Math.abs(n)<1e-10)n=0;
+    return Number.isInteger(n)?n.toString():Number(n.toFixed(8)).toString();
+}
+
+function showError(message){
+    error.textContent=message;
+    result.classList.remove("show");
+}
+
+function solveQuadratic(){
+    error.textContent="";
+
+    if(aInput.value===""||bInput.value===""||cInput.value===""){
+        showError("Please enter values for a, b and c.");
+        return;
+    }
+
+    const a=Number(aInput.value);
+    const b=Number(bInput.value);
+    const c=Number(cInput.value);
+
+    if(!Number.isFinite(a)||!Number.isFinite(b)||!Number.isFinite(c)){
+        showError("Please enter valid numbers.");
+        return;
+    }
+
+    if(a===0){
+        showError("'a' cannot be 0. Please enter a quadratic equation.");
+        return;
+    }
+
+    const D=b*b-4*a*c;
+    discriminant.textContent=formatNumber(D);
+
+    if(D>0){
+        root1.textContent=formatNumber((-b+Math.sqrt(D))/(2*a));
+        root2.textContent=formatNumber((-b-Math.sqrt(D))/(2*a));
+        rootType.textContent="2 Real Roots";
+    }else if(D===0){
+        const x=-b/(2*a);
+        root1.textContent=formatNumber(x);
+        root2.textContent=formatNumber(x);
+        rootType.textContent="1 Real Root";
+    }else{
+        const real=-b/(2*a);
+        const imag=Math.sqrt(-D)/Math.abs(2*a);
+        root1.textContent=formatNumber(real)+" + "+formatNumber(imag)+"i";
+        root2.textContent=formatNumber(real)+" − "+formatNumber(imag)+"i";
+        rootType.textContent="Complex Roots";
+    }
+
+    result.classList.add("show");
+}
+
+function clearAll(){
+    aInput.value="";
+    bInput.value="";
+    cInput.value="";
+    error.textContent="";
+    result.classList.remove("show");
+    discriminant.textContent="—";
+    root1.textContent="—";
+    root2.textContent="—";
+    rootType.textContent="";
+    aInput.focus();
+}
+
+async function copyResults(){
+    const text=`Quadratic Equation Solver
+
+Equation:
+${aInput.value}x² + ${bInput.value}x + ${cInput.value} = 0
+
+Discriminant: ${discriminant.textContent}
+
+x₁ = ${root1.textContent}
+x₂ = ${root2.textContent}`;
+
+    try{
+        await navigator.clipboard.writeText(text);
+        const old=copyBtn.textContent;
+        copyBtn.textContent="✓ Copied!";
+        setTimeout(()=>copyBtn.textContent=old,1500);
+    }catch{
+        copyBtn.textContent="Copy failed";
+    }
+}
+
+solveBtn.addEventListener("click",solveQuadratic);
+clearBtn.addEventListener("click",clearAll);
+copyBtn.addEventListener("click",copyResults);
+
+[aInput,bInput,cInput].forEach(input=>{
+    input.addEventListener("keydown",e=>{
+        if(e.key==="Enter")solveQuadratic();
+    });
+});
+
+aInput.focus();
+</script>
+</body>
+</html>
