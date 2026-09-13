@@ -3,174 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Quadratic Solver</title>
-
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <div class="background">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-    </div>
+<div class="background"></div>
 
-    <main class="container">
+<main class="container">
 
-        <!-- Header -->
-        <header>
-            <div class="logo">∿</div>
+    <header>
+        <div class="logo">∿</div>
+        <h1>Quadratic Solver</h1>
+        <p>Solve quadratic equations step by step</p>
+    </header>
 
-            <h1>Quadratic Solver</h1>
+    <section class="card equation-card">
 
-            <p>
-                Solve <strong>ax² + bx + c = 0</strong> instantly
-            </p>
-        </header>
+        <div class="equation">
+            <span>a</span>x² + <span>b</span>x + <span>c</span> = 0
+        </div>
 
+        <div class="inputs">
 
-        <!-- Main Card -->
-        <section class="card">
-
-            <!-- Equation -->
-            <div class="equation">
-                ax² + bx + c = 0
+            <div class="input-group">
+                <label for="a">a</label>
+                <input id="a" type="number" step="any" placeholder="1">
             </div>
 
-
-            <!-- Inputs -->
-            <div class="inputs">
-
-                <div class="input-group">
-                    <label for="a">a</label>
-
-                    <input
-                        type="number"
-                        id="a"
-                        placeholder="Enter a"
-                        step="any"
-                    >
-                </div>
-
-
-                <div class="operator">x² +</div>
-
-
-                <div class="input-group">
-                    <label for="b">b</label>
-
-                    <input
-                        type="number"
-                        id="b"
-                        placeholder="Enter b"
-                        step="any"
-                    >
-                </div>
-
-
-                <div class="operator">x +</div>
-
-
-                <div class="input-group">
-                    <label for="c">c</label>
-
-                    <input
-                        type="number"
-                        id="c"
-                        placeholder="Enter c"
-                        step="any"
-                    >
-                </div>
-
+            <div class="input-group">
+                <label for="b">b</label>
+                <input id="b" type="number" step="any" placeholder="5">
             </div>
 
-
-            <!-- Buttons -->
-            <div class="buttons">
-
-                <button id="solveBtn" class="solve-btn">
-                    <span>Calculate</span>
-                    <span class="arrow">→</span>
-                </button>
-
-                <button id="clearBtn" class="clear-btn">
-                    Clear
-                </button>
-
+            <div class="input-group">
+                <label for="c">c</label>
+                <input id="c" type="number" step="any" placeholder="6">
             </div>
 
+        </div>
 
-            <!-- Error -->
-            <div id="error" class="error"></div>
+        <div class="buttons">
+            <button class="solve-btn" onclick="solve()">Solve Equation</button>
+            <button class="clear-btn" onclick="clearAll()">Clear</button>
+        </div>
 
-
-            <!-- Results -->
-            <div id="result" class="result">
-
-                <div class="result-header">
-                    <span>Results</span>
-                    <span id="rootType" class="badge"></span>
-                </div>
+    </section>
 
 
-                <div class="discriminant">
-                    <span>Discriminant</span>
+    <section id="result" class="hidden">
 
-                    <strong id="discriminant">
-                        —
-                    </strong>
-                </div>
+        <div class="card result-card">
 
-
-                <div class="roots">
-
-                    <div class="root-box">
-                        <span>x₁</span>
-                        <strong id="root1">—</strong>
-                    </div>
-
-                    <div class="root-box">
-                        <span>x₂</span>
-                        <strong id="root2">—</strong>
-                    </div>
-
-                </div>
-
-
-                <button id="copyBtn" class="copy-btn">
-                    📋 Copy Results
-                </button>
-
+            <div class="result-header">
+                <h2>Solution</h2>
+                <button class="copy-btn" onclick="copySolution()">Copy</button>
             </div>
 
-        </section>
+            <div id="rootResult" class="root-result"></div>
+
+        </div>
 
 
-        <!-- Formula -->
-        <section class="formula">
+        <div class="card steps-card">
 
-            <h2>Quadratic Formula</h2>
+            <h2>Step-by-Step Solution</h2>
 
-            <div class="formula-equation">
-                x =
-                <span class="fraction">
-                    <span>−b ± √(b² − 4ac)</span>
-                    <span>2a</span>
-                </span>
-            </div>
+            <div id="steps"></div>
 
-        </section>
+        </div>
 
 
-        <footer>
-            Built with HTML • CSS • JavaScript
-        </footer>
+        <div class="card graph-card">
 
-    </main>
+            <h2>Parabola Graph</h2>
+            <p class="graph-subtitle">Visual representation of the equation</p>
+
+            <canvas id="graph"></canvas>
+
+        </div>
+
+    </section>
 
 
-    <script src="script.js"></script>
+    <footer>
+        Made with ❤️ using HTML, CSS & JavaScript
+    </footer>
+
+</main>
+
+<script src="script.js"></script>
 
 </body>
 </html>
